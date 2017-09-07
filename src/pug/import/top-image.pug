@@ -1,0 +1,13 @@
+include dataList.pug
+
+section.top-image.animated.fadeIn#top
+  div.color-on-image
+    div.container
+      div.information-about-me
+        for info in informationList
+          div.name= info.fullname
+          div.specialization= info.position
+          div.location
+            i.fa.fa-globe.fa-lg
+            | 
+            = info.location

@@ -1,0 +1,25 @@
+header
+  width: 100%
+  background-color: $headerBackgroundColor
+  position: fixed
+  z-index: 9999
+  .main
+    width: $mainWindowSize
+    margin: auto
+    display: flex
+    flex-wrap: wrap
+    .navbar
+      flex: 0 0 100%
+      display: flex
+      flex-wrap: wrap
+      justify-content: center
+      .navbar-item
+        padding: $mainPadding 50px
+        text-decoration: none
+        text-transform: uppercase
+        letter-spacing: .2em
+        color: $headerFontColor
+      .navbar-item:hover
+        background-color: $headerBackgroundHoverColor
+        color: black
+        transition: all .2s
