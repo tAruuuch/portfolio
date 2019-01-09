@@ -7,10 +7,4 @@ $(document).ready(function() {
     }, 1000);
     return false;
   });
-
-  $('.skillbar').each(function(){
-		$(this).find('.skillbar-bar').animate({
-			width:$(this).attr('data-percent')
-		}, 6000);
-	});
 });
