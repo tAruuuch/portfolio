@@ -1,16 +1,18 @@
 {
   "name": "portfolio",
-  "version": "0.0.1",
-  "main": "index.js",
-  "author": "Artemchuk Dmytro",
-  "license": "MIT",
+  "version": "1.0.0",
   "private": true,
+  "scripts": {
+    "clear": "gulp clear",
+    "start": "gulp dev",
+    "build": "gulp build"
+  },
   "devDependencies": {
     "browser-sync": "^2.26.3",
+    "browserify": "^16.2.3",
     "del": "^4.0.0",
     "gulp": "^4.0.0",
     "gulp-autoprefixer": "^6.0.0",
-    "gulp-cache": "^1.1.1",
     "gulp-clean-css": "^4.0.0",
     "gulp-concat": "^2.6.1",
     "gulp-group-css-media-queries": "^1.2.2",
@@ -18,18 +20,12 @@
     "gulp-notify": "^3.2.0",
     "gulp-pug": "^4.0.1",
     "gulp-rename": "^1.4.0",
-    "gulp-replace": "^1.0.0",
     "gulp-sass": "^4.0.2",
     "gulp-sourcemaps": "^2.6.5",
     "gulp-uglify-es": "^1.0.4",
-    "gulp-wait": "^0.0.2",
     "gulp-watch": "^5.0.1"
   },
   "dependencies": {
-    "jquery": "^3.3.1",
-    "jquery.marquee": "^1.5.0",
-    "leaflet": "^1.4.0",
-    "normalize.css": "^8.0.1",
-    "slick-carousel": "^1.8.1"
+    "normalize.css": "^8.0.1"
   }
 }

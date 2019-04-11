@@ -1,47 +1,44 @@
-const browserSync  = require('browser-sync').create(),
-      gulp         = require('gulp'),
-      gpug         = require('gulp-pug'),
-      gsass        = require('gulp-sass'),
-      cleancss     = require('gulp-clean-css'),
-      gcmq         = require('gulp-group-css-media-queries'),
-      autoprefixer = require('gulp-autoprefixer'),
-      imagemin     = require('gulp-imagemin'),
-      notify       = require('gulp-notify'),
-      rename       = require('gulp-rename'),
-      del          = require('del'),
-      sourcemaps   = require('gulp-sourcemaps'),
-      uglify       = require('gulp-uglify-es').default,
-      wait         = require('gulp-wait'),
-      concat       = require('gulp-concat');
+const browserSync                                 = require('browser-sync').create(),
+      { task, parallel, series, watch, src, dest} = require('gulp'),
+      pug                                         = require('gulp-pug'),
+      sass                                        = require('gulp-sass'),
+      browserify                                  = require('browserify'),
+      cleancss                                    = require('gulp-clean-css'),
+      gcmq                                        = require('gulp-group-css-media-queries'),
+      autoprefixer                                = require('gulp-autoprefixer'),
+      imagemin                                    = require('gulp-imagemin'),
+      notify                                      = require('gulp-notify'),
+      rename                                      = require('gulp-rename'),
+      sourcemaps                                  = require('gulp-sourcemaps'),
+      uglify                                      = require('gulp-uglify-es').default,
+      concat                                      = require('gulp-concat'),
+      del                                         = require('del');
 
 const path = {
 	build: {
-		pug: 'build/',
-		js: 'build/js/',
+		pug  : 'build/',
+		js   : 'build/js/',
 		style: 'build/style/',
 		image: 'build/img/',
-		font: 'build/fonts/'
+		font : 'build/font/'
 	},
 	src: {
-		pug: 'src/pug/*.pug',
-		js: 'src/js/*.js',
-		style: 'src/sass/**/*.{sass,scss}',
-		image: 'src/img/**/*.{jpg,jpeg,png,gif,svg,ico}',
-		font: 'src/font/**/*'
-	},
-	watch: {
-		pug: 'src/pug/**/*.pug',
-		js: 'src/js/*.js',
-		style: 'src/sass/**/*.{sass,scss}',
-		image: 'src/img/**/*.{jpg,jpeg,png,gif,svg,ico}',
-		font: 'src/font/**/*',
-		jslib: 'src/lib/js/*.js',
-		csslib: 'src/lib/css/*.css'
-	},
-	clean : 'build/'
+		pug   : 'src/pug/*.pug',
+		js    : 'src/js/**/*.js',
+		style : 'src/sass/**/*.{sass,scss}',
+		image : 'src/img/**/*.{jpg,jpeg,png,gif,svg,ico}',
+		font  : 'src/font/**/*.{eot,ttf,woff,woff2}',
+		jslib : [
+			'src/lib/js/*.js',
+		],
+		csslib: [
+			'./node_modules/normalize.css/normalize.css',
+			'src/lib/css/*.css',
+		]
+	}
 };
 
-function browserSyncServer(done) {
+task('browserSyncServer', function(done) {
 	browserSync.init({
 		server: {
 			baseDir: path.build.pug
@@ -49,16 +46,15 @@ function browserSyncServer(done) {
 		notify: true
 	});
 	done();
-}
+});
 
-function reload(done) {
+task('reload', function(done) {
 	browserSync.reload();
 	done();
-}
+});
 
-function js() {
-	return gulp
-		.src([path.src.js])
+task('js:dev', function() {
+	return src(path.src.js)
 		.on('error', notify.onError({
 			message: '\n<%= error.message %>',
 			title: 'JS'
@@ -70,19 +66,41 @@ function js() {
 			suffix: '.min'
 		}))
 		.pipe(sourcemaps.write('.'))
-		.pipe(gulp.dest(path.build.js))
+		.pipe(dest(path.build.js))
 		.pipe(browserSync.stream());
-}
+});
 
-function sass() {
-	return gulp
-		.src([path.src.style])
+task('js:build', function() {
+	return src(path.src.js)
+		.pipe(concat('bundle.js'))
+		.pipe(uglify())
+		.pipe(rename({
+			suffix: '.min'
+		}))
+		.pipe(dest(path.build.js))
+		.pipe(browserSync.stream());
+});
+
+task('sass:dev', function() {
+	return src(path.src.style)
 		.pipe(sass())
 		.on('error', notify.onError({
 			message: '\n<%= error.message %>',
 			title: 'SASS'
 		}))
 		.pipe(sourcemaps.init())
+		.pipe(cleancss())
+		.pipe(autoprefixer({
+			browsers: ['last 4 versions']
+		}))
+		.pipe(sourcemaps.write('.'))
+		.pipe(dest(path.build.style))
+		.pipe(browserSync.stream());
+});
+
+task('sass:build', function() {
+	return src(path.src.style)
+		.pipe(sass())
 		.pipe(autoprefixer({
 			browsers: ['last 4 versions']
 		}))
@@ -91,97 +109,87 @@ function sass() {
 		.pipe(rename({
 			suffix: '.min'
 		}))
-		.pipe(sourcemaps.write('.'))
-		.pipe(gulp.dest(path.build.style))
+		.pipe(dest(path.build.style))
 		.pipe(browserSync.stream());
-}
+});
 
-function pug() {
-	return gulp
-		.src([path.src.pug])
-		.pipe(pug({
-			pretty: true
-		}))
+task('pug:dev', function() {
+	return src(path.src.pug)
 		.on('error', notify.onError({
 			message: '\n<%= error.message %>',
 			title: 'PUG'
 		}))
-		.pipe(gulp.dest(path.build.pug))
+		.pipe(pug())
+		.pipe(dest(path.build.pug))
 		.pipe(browserSync.stream());
-}
+});
 
-function image() {
-	return gulp
-		.src([path.src.image])
-		// .pipe(imagemin([
-		// 	imagemin.gifsicle({
-		// 		interlaced: true
-		// 	}),
-		// 	imagemin.jpegtran({
-		// 		progressive: true
-		// 	}),
-		// 	imagemin.optipng({
-		// 		optimizationLevel: 5
-		// 	}),
-		// 	imagemin.svgo({
-		// 		plugins: [{
-		// 				removeViewBox: true
-		// 			},
-		// 			{
-		// 				cleanupIDs: false
-		// 			}
-		// 		]
-		// 	})
-		// ]))
-		.pipe(gulp.dest(path.build.image))
+task('pug:build', function() {
+	return src(path.src.pug)
+		.pipe(pug({
+			pretty: true
+		}))
+		.pipe(dest(path.build.pug))
 		.pipe(browserSync.stream());
-}
+});
 
-function font() {
-	return gulp
-		.src([path.src.font])
-		.pipe(gulp.dest(path.build.font))
+task('image:dev', function() {
+	return src(path.src.image)
+		.pipe(dest(path.build.image))
 		.pipe(browserSync.stream());
-};
+});
 
-function jslib() {
-	return gulp
-		.src([
-			'./node_modules/jquery/dist/jquery.min.js',
-			'./node_modules/slick-carousel/slick/slick.min.js',
-			'./node_modules/leaflet/dist/leaflet.js',
-			'src/lib/js/*.js',
-		])
-		.pipe(gulp.dest(path.build.js))
+task('image:build', function () {
+	return src(path.src.image)
+		.pipe(imagemin([
+			imagemin.gifsicle({
+				interlaced: true
+			}),
+			imagemin.jpegtran({
+				progressive: true
+			}),
+			imagemin.optipng({
+				optimizationLevel: 5
+			}),
+			imagemin.svgo({
+				plugins: [{
+						removeViewBox: true
+					},
+					{
+						cleanupIDs: false
+					}
+				]
+			})
+		]))
+		.pipe(dest(path.build.image))
 		.pipe(browserSync.stream());
-}
+});
 
-function csslib() {
-	return gulp
-		.src([
-			'./node_modules/normalize.css/normalize.css',
-			'./node_modules/slick-carousel/slick/slick.css',
-			'./node_modules/slick-carousel/slick/slick-theme.css',
-			'./node_modules/leaflet/dist/leaflet.css',
-			'src/lib/css/*.css',
-		])
-		.pipe(gulp.dest(path.build.style))
+task('font', function() {
+	return src(path.src.font)
+		.pipe(dest(path.build.font))
 		.pipe(browserSync.stream());
-}
+});
 
-function watcher() {
-	gulp.watch(path.watch.pug, gulp.series(pug, reload));
-	gulp.watch(path.watch.style, gulp.series(sass, reload));
-	gulp.watch(path.watch.js, gulp.series(js, reload));
-	gulp.watch(path.watch.image, gulp.series(image, reload));
-	gulp.watch(path.watch.font, gulp.series(font, reload));
-	gulp.watch(path.watch.jslib, gulp.series(jslib, reload));
-	gulp.watch(path.watch.csslib, gulp.series(csslib, reload));
-}
+task('csslib', function() {
+	return src(path.src.csslib)
+		.pipe(dest(path.build.style))
+		.pipe(browserSync.stream());
+});
 
-function clean() {
-	return del([path.build.pug]);
-}
+task('watcher', function() {
+	watch(path.src.pug, series('pug:dev', 'reload'));
+	watch(path.src.style, series('sass:dev', 'reload'));
+	watch(path.src.js, series('js:dev', 'reload'));
+	watch(path.src.image, series('image:dev', 'reload'));
+	watch(path.src.font, series('font', 'reload'));
+	watch(path.src.jslib, series('jslib', 'reload'));
+	watch(path.src.csslib, series('csslib', 'reload'));
+});
 
-gulp.task('default', gulp.series(clean, pug, js, sass, jslib, csslib, image, font, browserSyncServer, watcher));
-gulp.task('build', gulp.series(clean, pug, js, sass, jslib, csslib, image, font));
+task('clear', function() {
+	return del(path.build.pug);
+});
+
+task('dev', parallel('pug:dev', 'js:dev', 'sass:dev', 'csslib', 'image:dev', 'font', 'browserSyncServer', 'watcher'));
+task('build', series('clear', 'pug:build', 'js:build', 'sass:build', 'csslib', 'image:build', 'font'));

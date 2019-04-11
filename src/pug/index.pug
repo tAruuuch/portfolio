@@ -1,14 +1,7 @@
-extends import/new/base.pug
+extends import/base/base.pug
+block nav
 block header
-  include import/new/header.pug
 block content
-  include import/new/about.pug
-  include import/new/in-daily-use.pug
-  include import/new/personal-project.pug
-  include import/new/project.pug
-  include import/new/contact.pug
 block footer
-  include import/new/footer.pug
 block import
-  include import/new/import.pug
-  
+	include import/base/import.pug
