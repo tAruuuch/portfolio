@@ -2,7 +2,6 @@ const browserSync                                 = require('browser-sync').crea
       { task, parallel, series, watch, src, dest} = require('gulp'),
       pug                                         = require('gulp-pug'),
       sass                                        = require('gulp-sass'),
-      browserify                                  = require('browserify'),
       cleancss                                    = require('gulp-clean-css'),
       gcmq                                        = require('gulp-group-css-media-queries'),
       autoprefixer                                = require('gulp-autoprefixer'),
