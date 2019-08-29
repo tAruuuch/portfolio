@@ -1,5 +1,5 @@
 # Folder with compile project, you need only source code
-dist
+build
 
 # Folder with package
 node_modules
