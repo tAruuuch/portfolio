@@ -1,0 +1,54 @@
+User-agent: Yandex
+
+Disallow: /*.pdf
+Disallow: /*.xls
+Disallow: /*.doc
+Disallow: /*.ppt
+Disallow: /*.txt
+
+Allow: /*/*.css
+Allow: /*/*.js
+Allow: /*/img/*.jpg
+Allow: /*/img/*.jpeg
+Allow: /*/img/*.png
+Allow: /*/img/*.gif
+
+Clean-param: utm_source&utm_medium&utm_term&utm_content&utm_campaign&yclid&gclid&_openstat&from /
+
+Host: taruuuch.com
+
+User-agent: Googlebot
+
+Disallow: /*.pdf
+Disallow: /*.xls
+Disallow: /*.doc
+Disallow: /*.ppt
+Disallow: /*.txt
+
+Allow: /*/*.css
+Allow: /*/*.js
+Allow: /*/img/*.jpg
+Allow: /*/img/*.jpeg
+Allow: /*/img/*.png
+Allow: /*/img/*.gif
+
+User-agent: *
+
+Disallow: /*utm
+Disallow: /*clid=
+Disallow: /*openstat
+Disallow: /*from
+Disallow: /*.pdf
+Disallow: /*.xls
+Disallow: /*.doc
+Disallow: /*.ppt
+Disallow: /*.txt
+
+Allow: /*/*.css
+Allow: /*/*.js
+Allow: /*/img/*.jpg
+Allow: /*/img/*.jpeg
+Allow: /*/img/*.png
+Allow: /*/img/*.gif
+
+Sitemap: https://taruuuch.com/sitemap.xml
