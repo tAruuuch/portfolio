@@ -20,65 +20,67 @@ module.exports = {
     paths: PATHS
   },
 	entry: {
-		app: PATHS.src + '/js/app.js'
+		app: PATHS.src + '/js/app.js',
 	},
 	output: {
 		path: PATHS.build,
-		filename: `js/[name].bundle.js`,
+		// publicPath: '/',
+		filename: `[name].min.js`,
 	},
 	optimization: {
 		minimizer: [
 			new UglifyJsPlugin({
 				test: /\.js(\?.*)?$/i,
-				parallel: true,
 				parallel: 4,
 			})
 		],
 	},
 	module: {
-		rules: [
-			{
-				test: /\.pug$/,
-				loader: 'pug-loader'
-			},
-			{
-				test: /\.js$/,
-				exclude: '/node_modules/',
-				use: { loader: 'babel-loader' }
-			},
-			{
-				test: /\.(woff(2)?|ttf|eot|svg)(\?v=\d+\.\d+\.\d+)?$/,
-				loader: 'file-loader',
-				options: {
-					name: '[name].[ext]'
-				}
-			}, {
-				test: /\.(png|jpg|gif|svg)$/,
-				loader: 'file-loader',
-				options: {
-					name: '[name].[ext]'
-				}
-			},
-			{
-				test: /\.sass$/,
-				use: [
-					'style-loader',
-					MiniCssExtractPlugin.loader,
-					{
-						loader: 'css-loader',
-						options: { sourceMap: true }
-					},
-					{
-						loader: 'postcss-loader',
-						options: { sourceMap: true, config: { path: './postcss.config.js' } }
-					},
-					{
-						loader: 'sass-loader',
-						options: { sourceMap: true }
-					}
-				]
+		rules: [{
+			test: /\.pug$/,
+			loader: 'pug-loader'
+		}, {
+			test: /\.js$/,
+			exclude: '/node_modules/',
+			use: { loader: 'babel-loader' }
+		}, {
+			test: /\.(woff(2)?|ttf|eot|svg)(\?v=\d+\.\d+\.\d+)?$/,
+			loader: 'file-loader',
+			options: {
+				name: '[name].[ext]'
 			}
-		]
+		}, {
+			test: /\.(png|jpg|jpeg|gif|svg)$/,
+			loader: 'file-loader',
+			options: {
+				name: '[name].[ext]'
+			}
+		}, {
+			test: /\.(sa|sc|c)ss$/,
+			exclude: '/node_modules/',
+			use: [
+				{
+					loader: MiniCssExtractPlugin.loader,
+					options: {
+						hmr: process.env.NODE_ENV === 'development',
+					}
+				}, {
+					loader: 'css-loader',
+					options: { sourceMap: true }
+				}, {
+					loader: 'postcss-loader',
+					options: {
+						sourceMap: true,
+						config: {
+							path: './postcss.config.js'
+						}
+					}
+				}, {
+					loader: 'sass-loader',
+					options: { sourceMap: true }
+				}
+			]
+		}]
 	},
 	plugins: [
 		new CleanWebpackPlugin(),
@@ -86,7 +88,7 @@ module.exports = {
 			'process.env.NODE_ENV': JSON.stringify('development')
 		}),
 		new MiniCssExtractPlugin({
-			filename: `${PATHS.build}/css/[name].css`
+			filename: `[name].min.css`
 		}),
 		new CopyWebpackPlugin([
 			{ from: `${PATHS.src}/img`, to: `${PATHS.build}/img` },
