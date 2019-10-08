@@ -1,6 +1,13 @@
 extends import/base/base.pug
-block nav
+block navigation
+	include default/navigation.pug
 block header
+	include default/header.pug
 block content
-	|123
+	include section/about.pug
+	include section/experience.pug
+	include section/project.pug
+	include section/work.pug
+	include section/blog.pug
 block footer
+	include default/footer.pug
