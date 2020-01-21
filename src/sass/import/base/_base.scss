@@ -1,0 +1,13 @@
+* {
+  margin: 0;
+  padding: 0;
+	box-sizing: border-box;
+}
+
+body {
+  font: $font-size $font;
+  font-weight: $font-weight;
+  color: $font-primary-color;
+  line-height: $line-height;
+	background-color: $background-color;
+}

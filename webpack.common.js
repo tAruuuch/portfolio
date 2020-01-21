@@ -92,7 +92,7 @@ module.exports = {
 		}),
 		new CopyWebpackPlugin([
 			{ from: `${PATHS.src}/img`, to: `${PATHS.build}/img` },
-      { from: `${PATHS.src}/fonts`, to: `${PATHS.build}/fonts` },
+      // { from: `${PATHS.src}/fonts`, to: `${PATHS.build}/fonts` },
       { from: `${PATHS.src}/static`, to: '' },
 		]),
 		...PAGES.map(page => new HtmlWebpackPlugin({

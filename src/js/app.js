@@ -1,5 +1,5 @@
 require('normalize.css');
-require('../sass/main.sass');
+require('../sass/main.scss');
 
 document.addEventListener('DOMContentLoaded', function() {
 	let links = document.querySelectorAll('a');
